@@ -1,0 +1,2007 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="ISO-8859-1">
+<title>ATM</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+<style>
+	#welcome{
+		margin-left:200px;
+		font-size:60px;
+	}
+  .overlay {
+		position: fixed;
+  		top: 0;
+  		bottom: 0;
+  		left: 0;
+  		right: 0;
+  		background: rgba(0, 0, 0, 0.7);
+  		transition: opacity 500ms;
+  		visibility: hidden;
+  		opacity: 0;
+	}
+	.overlay:target {
+		visibility: visible;
+  		opacity: 1;
+	}
+
+	.popup {
+  		margin: 70px auto;
+  		padding: 20px;
+  		background: #fff;
+  		border-radius: 5px;
+  		width: 750px;
+  		position: relative;
+  		transition: all 5s ease-in-out;
+	}	
+
+	.popup h2 {
+		margin-top: 0;
+	  	color: #333;
+		font-family: Tahoma, Arial, sans-serif;
+	}
+	.popup .close {
+  		position: absolute;
+  		top: 20px;
+  		right: 30px;
+  		transition: all 200ms;
+  		font-size: 30px;
+  		font-weight: bold;
+  		text-decoration: none;
+  		color: #333;
+	}
+	.popup .close:hover {
+  		color: #06D85F;
+	}
+	.popup .content {
+  		width: 700px;
+  		height: 430px;
+	}
+	
+	.content img{
+		margin-left: 270px;
+	}
+
+	@media screen and (max-width: 700px){
+  		.box{
+    		width: 70%;
+  		}
+  		.popup{
+    		width: 70%;
+  		}
+	}
+
+/* Toggle Styles */
+
+#wrapper {
+    padding-left: 0;
+    -webkit-transition: all 0.5s ease;
+    -moz-transition: all 0.5s ease;
+    -o-transition: all 0.5s ease;
+    transition: all 0.5s ease;
+}
+
+#wrapper.toggled {
+    padding-left: 250px;
+}
+
+#sidebar-wrapper {
+    z-index: 1000;
+    position: fixed;
+    left: 250px;
+    width: 0;
+    height: 100%;
+    margin-left: -250px;
+    overflow-y: auto;
+    background: #000;
+    -webkit-transition: all 0.5s ease;
+    -moz-transition: all 0.5s ease;
+    -o-transition: all 0.5s ease;
+    transition: all 0.5s ease;
+}
+
+#wrapper.toggled #sidebar-wrapper {
+    width: 200px;
+}
+
+#wrapper.toggled{
+    position: absolute;
+    margin-right: -250px;
+}
+
+/* Sidebar Styles */
+
+.sidebar-nav {
+    position: absolute;
+    top: 0;
+    width: 250px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.sidebar-nav li {
+    text-indent: 20px;
+    line-height: 40px;
+}
+
+.sidebar-nav li a {
+    display: block;
+    text-decoration: none;
+    color: #999999;
+}
+
+.sidebar-nav li a:hover {
+    text-decoration: none;
+    color: #fff;
+}
+
+.sidebar-nav li a:active,
+.sidebar-nav li a:focus {
+    text-decoration: none;
+}
+
+@media(min-width:768px) {
+    #wrapper {
+        padding-left: 250px;
+    }
+
+    #wrapper.toggled {
+        padding-left: 0;
+        position: relative;
+        margin-right: 0;
+    }
+
+    #sidebar-wrapper {
+        width: 250px;
+    }
+
+    #wrapper.toggled #sidebar-wrapper {
+        width: 0;
+    }
+}
+
+.material-symbols-outlined {
+  position: relative;
+  padding:10px;
+  top: 5px;
+  font-variation-settings:
+  'FILL' 0,
+  'wght' 400,
+  'GRAD' 0,
+  'opsz' 48
+ 
+}
+
+/* Show Accounts */
+#showaccounts,#addaccounts,#updateaccounts,#statement{
+	width:1010px;
+	height:100%;
+	margin-left: 250px;
+	position: fixed;
+	/* margin:4px, 4px; */
+    padding:4px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    text-align:justify;
+}
+
+/* Main Content */
+	#maincontent{
+		width: 1010px;
+		height: 100%;
+		margin-left:250px;
+	}	
+	.mainbtn{
+		font-size: 30px;
+		width:400px;
+		height:100px;
+		margin-left:80px;
+	}
+/* Withdraw */
+	.withdrawpopup{
+		margin-top:70px;
+		margin-left:300px;
+  		padding: 20px;
+  		background: #fff;
+  		border-radius: 5px;
+  		width: 900px;
+  		position: relative;
+  		transition: all 5s ease-in-out;
+	}
+	.withdrawpopup .close {
+  		position: absolute;
+  		top: 20px;
+  		right: 30px;
+  		transition: all 200ms;
+  		font-size: 30px;
+  		font-weight: bold;
+  		text-decoration: none;
+  		color: #333;
+	}
+	.withdrawpopup .close:hover {
+  		color: #06D85F;
+	}
+	#withdrawinput,#amountmobile,#amountuser,#depositinput,#fastcashinput{
+		font-size: 50px;
+		background-color: transparent;
+    	border: 0px solid;
+    	margin-left:300px;
+    	color:green;
+	}
+	#withdrawinput:focus,#amountmobile:focus,#amountuser:focus,#depositinput:focus,#fastcashinput:focus{
+	 	outline: none;
+	 }
+	 .pinBox {
+  		--width: 296px;
+  		--height: 74px;
+  		--spacing: 47px;
+  
+  		display: inline-block;
+  		position: relative;
+  		width: var(--width);
+  		height: var(--height);
+  		background-image: url(https://i.stack.imgur.com/JbkZl.png); 
+	}
+
+	.withdrawpin {
+  		position: absolute;
+  		padding-left: 21px;
+  		font-family: courier, monospaced;
+  		font-size: var(--spacing);
+  		height: var(--height);
+  		letter-spacing: var(--spacing);
+  		background-color: transparent;
+  		border: 0;
+  		outline: none;
+  		clip: rect(0px, calc(var(--width) - 21px), var(--height), 0px);
+	}
+	/* Fast Cash */
+	#twok,#onek,#five,#two,#one,#fifty{
+		width: 300px;
+		height: 50px;
+	}
+	 .depoinput1, .depoinput2{
+	 	width: 200px;
+	 	height: 50px;
+	 	margin-left: 100px;
+	 	margin-right: 50px;
+	 	font-size: 30px;
+	 }
+	 .depoinput1{
+	 	width: 200px;
+	 	height: 50px;
+	 	margin-left: 80px;
+	 	margin-right: 50px;
+	 }
+	 .depoinput2{
+	 	width: 200px;
+	 	height: 50px;
+	 }
+	 .depolabel1, .depolabel2{
+	 	font-size:22px;
+	 }
+	 .depinp{
+	 	margin-left:420px;
+	 	margin-top:-300px;
+	 }
+	 /* Statement */
+	 #userDetails{
+	 	margin-left:50px;
+	 	padding:0px;
+	 }
+	 
+	 /*Profile Photo*/
+	 
+	 #img-preview {
+  		display: none; 
+  		width: 155px;    
+  		margin-bottom: 20px;
+	}
+	#img-preview img {  
+ 		width: 100%;
+  		height: auto; 
+  		display: block;
+  		border-radius:50%;   
+	}
+</style>
+</head>
+<body>
+
+	<!-- navbar -->
+
+	<nav class="navbar navbar-expand-lg bg-dark">
+		<div class="container-fluid">
+			<a class="navbar-brand text-white" href="redirect:/dashboard">ATM</a>
+			<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<div class="collapse navbar-collapse" id="navbarSupportedContent">
+				<ul class="navbar-nav me-auto mb-2 mb-lg-0">
+					<li class="nav-item"><a class="nav-link active text-white" href="/signin" style="margin-left: 1000px">Logout</a></li>
+					<li class="nav-item"><a class="nav-link active text-white" target="_top" href="#popup1" id="firstname"></a></li>
+				</ul>
+			</div>
+		</div>
+	</nav>
+
+	<!-- navbar end  -->
+	
+	<!-- Profile -->
+		
+	<div id="popup1" class="overlay">
+		<div class="popup" style="height:600px;">
+			<h2>Profile Details</h2>
+			<a class="close" href="#">&times;</a>
+			<div class="content">
+				<div id="img-preview"></div>
+					<img id="profilephoto" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTLHpSaMs4clzCDPPRzsiYiRsEXNjUKjQ6QYWSTpDUSrkMC1tT6lVa1k_hZE-aO68QiDoM&usqp=CAU">
+				<div class="profiledetails">
+					<table class="table">
+						<tbody>
+							<tr>
+								<th scope="row">Name &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </th>
+								<td id="nameprint"></td>
+							</tr>
+							<tr>
+								<th scope="row">Username &nbsp; </th>
+								<td id="usernameprint"></td>
+							</tr>
+							<tr>
+								<th scope="row">Email &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </th>
+								<td id="emailprint"></td>
+							</tr>
+							<tr>
+								<th scope="row">Phone &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </th>
+								<td id="phoneprint"></td>
+							</tr>
+							<tr>
+								<th scope="row">Role &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </th>
+								<td id="rolenameprint"></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<label style="margin-left:250px;" for="choose-file" class="btn btn-info">Upload Profile Photo</label>
+				<input style="margin-left:300px;width:150px;display:none;" class="btn btn-info" type="file" accept="image/*" id="choose-file"/><br>
+			</div>
+		</div>
+	</div>
+
+	<!-- Profile End -->
+	
+	<!-- Show Accounts -->
+	
+	<div id="showaccounts" style="display:none;">
+		<h2>All Accounts</h2>
+		<div>
+			<table class="table">
+				<tbody>
+					<tr>
+						<th>USERID</th>
+						<th>USERNAME</th>
+    					<th>FIRSTNAME</th>
+    					<th>LASTNAME</th>
+    					<th>E-MAIL</th>
+    					<th>PHONE</th>
+    					<th>DEPOSIT</th>
+  					</tr>
+					<tr th:each="users : ${user}">
+     					<td th:text="${users.id}"></td>
+     					<td th:text="${users.username}"></td>
+     					<td th:text="${users.firstName}"></td>
+     					<td th:text="${users.lastName}"></td>
+     					<td th:text="${users.email}"></td>
+     					<td th:text="${users.phone}"></td>
+     					<td th:text="${users.deposit}"></td>
+     					<td><input type="button" value="UPDATE" class="btn btn-info updateuserbtns" th:onclick="updateUsers([[${users.id}]],[[${users.username}]],[[${users.pin}]],[[${users.firstName}]],[[${users.lastName}]],[[${users.email}]],[[${users.phone}]],[[${users.deposit}]],[[${users.agreed}]])" /></td>
+     					<td class="uidbuttons"><input class="btn btn-danger" id="uidbutton" type="button" value="DELETE" th:onclick="delUser([[${users.id}]])"/></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<input style="margin-left:450px;" id="adduser" class="btn btn-primary" type="button" value="ADD USER"><br><br><br><br><br>
+	</div>
+	
+	<!-- Show Accounts End -->
+	
+	<!-- Add Accounts -->
+	
+	<div id="addaccounts" style="display:none">
+		<h2>Add New Account</h2>
+		<div class="container">
+			<div class="row mt-5">
+				<div class="col-md-6 offset-md-3">
+					<form th:action="@{/addUser}" method="post" class="row g-3 needs-validation bg-white p-4" th:object=${user}>
+						<div class="mb-3">
+							<label class="form-label"><b>Username</b></label>
+							<input type="text" class="form-control" name="username" required>
+						</div>
+						<div class="mb-3">
+							<label class="form-label"><b>Pin</b></label>
+							<input type="password" class="form-control" name="pin" required>
+						</div>
+						<div class="mb-3">
+							<label class="form-label"><b>First Name</b></label>
+							<input type="text" class="form-control" name="firstName" required>
+						</div>
+						<div class="mb-3">
+							<label class="form-label"><b>Last Name</b></label>
+							<input type="text" class="form-control" name="lastName" required>
+						</div>
+						<div class="mb-3">
+							<label class="form-label"><b>Email Address</b></label>
+							<input type="email" class="form-control" name="email" required>
+						</div>
+						<div class="mb-3">
+							<label class="form-label"><b>Phone</b></label>
+							<input type="text" class="form-control" name="phone" required>
+						</div>
+						<div class="mb-3">
+							<label class="form-label"><b>Deposit</b></label>
+							<input type="text" class="form-control" name="deposit" required>
+						</div>
+						<div class="mb-3 form-check">
+							<input name="agreed" class="form-check-input" type="checkbox" required>
+      						<label class="form-check-label">Agree to the terms and conditions</label>
+						</div>
+						<input class="btn btn-primary" type="submit" value="Submit">
+						<input class="btn btn-primary" type="reset" value="Reset">
+					</form><br><br><br><br>
+				</div>
+			</div>
+		</div>	
+	</div>
+	<!-- Add Accounts End -->
+	
+	<!-- Update Accounts -->
+	
+	<div id="updateaccounts" style="display:none">
+		<h2>Update Account</h2>
+		<div class="container">
+			<div class="row mt-5">
+				<div class="col-md-6 offset-md-3">
+					<form th:action="@{/user/update}" method="post" class="row g-3 needs-validation bg-white p-4" th:object=${user} name="userform">
+						<div class="mb-3">
+							<label class="form-label"><b>Username</b></label>
+							<input type="hidden" class="form-control" name="id">
+							<input type="text" class="form-control" name="username" required>
+						</div>
+						<div class="mb-3">
+							<label class="form-label"><b>Pin</b></label>
+							<input type="password" class="form-control" name="pin" required>
+						</div>
+						<div class="mb-3">
+							<label class="form-label"><b>First Name</b></label>
+							<input type="text" class="form-control" name="firstName" required>
+						</div>
+						<div class="mb-3">
+							<label class="form-label"><b>Last Name</b></label>
+							<input type="text" class="form-control" name="lastName" required>
+						</div>
+						<div class="mb-3">
+							<label class="form-label"><b>Email Address</b></label>
+							<input type="email" class="form-control" name="email" required>
+						</div>
+						<div class="mb-3">
+							<label class="form-label"><b>Phone</b></label>
+							<input type="text" class="form-control" name="phone" required>
+						</div>
+						<div class="mb-3">
+							<label class="form-label"><b>Deposit</b></label>
+							<input type="text" class="form-control" name="deposit" required>
+						</div>
+						<div class="mb-3 form-check">
+							<input name="agreed" class="form-check-input" type="checkbox" required>
+      						<label class="form-check-label">Agree to the terms and conditions</label>
+						</div>
+						<input class="btn btn-primary" type="submit" value="Submit">
+						<input class="btn btn-primary" type="reset" value="Reset">
+					</form><br><br><br><br>
+				</div>
+			</div>
+		</div>	
+	</div>
+ <!-- Update Accounts End -->
+	
+	<!-- Withdraw -->
+	
+	<div id="popup2" class="overlay">
+		<div class="withdrawpopup">
+			<h2>Withdraw Money</h2>
+			<a class="close" href="#">&times;</a>
+			<div class="content"><br>
+				<button type="button" class="btn btn-dark mainbtn" id="savings" style="margin-left:400px" onclick="window.location.href='#popup3'">SAVINGS</button><br><br><br><br>
+				<button type="button" class="btn btn-dark mainbtn" id="current" style="margin-left:400px" onclick="window.location.href='#popup3'">CURRENT</button><br><br><br><br>
+				<button type="button" class="btn btn-dark mainbtn" id="kyc" style="margin-left:400px" onclick="Swal.fire({
+					  title: 'KYC Is Not Available At The Moment!',
+					  showClass: {
+					    popup: 'animate__animated animate__fadeInDown'
+					  },
+					  hideClass: {
+					    popup: 'animate__animated animate__fadeOutUp'
+					  }
+					})">KYC</button>
+			</div>
+		</div>
+	</div>
+	
+	<!-- Withdraw End-->
+	
+	<!-- Savings -->
+	
+	<div id="popup3" class="overlay">
+		<div class="withdrawpopup">
+			<h2>Withdraw Money</h2>
+			<a class="close" href="#">&times;</a>
+			<div class="content"><br>
+				<h1 style="margin-left:200px;">Enter Amount To Withdraw</h1>
+				<input style="width:150px;" type="text" name="amount" id="withdrawinput" maxlength=5 placeholder="0.00"><br><br><br>
+				<button type="button" class="btn btn-dark" id="withdrawbtn" style="margin-left:250px;font-size:30px;width:180px" onclick="window.location.href='#enterpin'">WITHDRAW</button>
+				<button type="button" class="btn btn-dark" style="margin-left:80px;font-size:30px;width:150px" onclick="history.back()">CANCEL</button>
+			</div>
+		</div>
+	</div>
+	
+	<!-- Savings End -->
+	
+	<!-- Enter Pin -->
+	
+	<div id="enterpin" class="overlay">
+		<div class="withdrawpopup">
+			<h2>Withdraw Money</h2>
+			<a class="close" href="#">&times;</a>
+			<div class="content"><br>
+				<h1 style="margin-left:200px;">Enter Pin To Withdraw:</h1>
+				<div class="pinBox" style="margin-left:250px">
+  					<input class="withdrawpin" name="checkpin" id="checkpin" type="password" maxlength=4 autocomplete=off >
+				</div><br><br>
+				<button type="button" class="btn btn-dark" id="withdrawsubmitbtn" style="margin-left:250px;font-size:25px;width:120px" onclick="withdraw()">SUBMIT</button>
+				<button type="button" class="btn btn-dark" style="margin-left:50px;font-size:25px;width:120px" onclick="history.back()">CANCEL</button>
+			</div>
+		</div>
+	</div>
+	
+	<!-- Enter Pin End -->
+	
+	<!-- Fast Cash -->
+	
+	<div id="fastcash" class="overlay">
+		<div class="withdrawpopup">
+			<h2>Fast Cash</h2>
+			<a class="close" href="#">&times;</a>
+			<div class="content">
+				<input style="width:150px;" type="text" name="fastcashamount" id="fastcashinput" maxlength=5 placeholder="0.00"><br><br>
+				<button type="button" class="btn btn-dark mainbtn" id="twok" onclick="twok()">2000</button>
+				<button type="button" class="btn btn-dark mainbtn" id="onek" onclick="onek()">1000</button><br><br><br>
+				<button type="button" class="btn btn-dark mainbtn" id="five" onclick="five()">500</button>
+				<button type="button" class="btn btn-dark mainbtn" id="two" onclick="two()">200</button><br><br><br>
+				<button type="button" class="btn btn-dark mainbtn" id="one" onclick="one()">100</button>
+				<button type="button" class="btn btn-dark mainbtn" id="fifty" onclick="fifty()">50</button><br><br><br>
+				<button type="button" class="btn btn-dark" id="fastwithdrawbtn" style="margin-left:250px;font-size:30px;width:180px" onclick="window.location.href='#enterpin1'">WITHDRAW</button>
+				<button type="button" class="btn btn-dark" style="margin-left:80px;font-size:30px;width:150px" onclick="history.back()">CANCEL</button>
+			</div>
+		</div>
+	</div>
+	
+	<!-- Fast Cash End -->
+	
+	<!-- Enter Pin -->
+	
+	<div id="enterpin1" class="overlay">
+		<div class="withdrawpopup">
+			<h2>Fast Cash Money</h2>
+			<a class="close" href="#">&times;</a>
+			<div class="content"><br>
+				<h1 style="margin-left:200px;">Enter Pin To Withdraw:</h1>
+				<div class="pinBox" style="margin-left:250px">
+  					<input class="withdrawpin" name="checkpin2" id="checkpin1" type="password" maxlength=4 autocomplete=off >
+				</div><br><br>
+				<button type="button" class="btn btn-dark" id="withdrawsubmitbtn1" style="margin-left:250px;font-size:25px;width:120px" onclick="fastcash()">SUBMIT</button>
+				<button type="button" class="btn btn-dark" style="margin-left:50px;font-size:25px;width:120px" onclick="history.back()">CANCEL</button>
+			</div>
+		</div>
+	</div>
+	
+	<!-- Enter Pin End -->
+	
+	<!-- Deposit -->
+	
+	<div id="deposit" class="overlay">
+		<div class="withdrawpopup">
+			<h2>Deposit Money</h2>
+			<a class="close" href="#">&times;</a>
+			<div class="content">
+				<input style="width:150px;" type="text" name="depositamount" id="depositinput" maxlength=5 placeholder="0.00"><br><br>
+				<label class="depolabel1"><b>2000&nbsp;&nbsp;&nbsp;X&nbsp;&nbsp;&nbsp;   </b></label><input onchange="depotwok()" type="text" id="depo1" class="depoinput1" name="twok"><br><br>
+				<label class="depolabel1"><b>1000&nbsp;&nbsp;&nbsp;X&nbsp;&nbsp;&nbsp;   </b></label><input onchange="depoonek()" type="text" id="depo2" class="depoinput1" name="onek"><br><br>
+				<label class="depolabel1"><b>500&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;X&nbsp;&nbsp;&nbsp;   </b></label><input onchange="depofive()" type="text" id="depo3" class="depoinput1" name="five"><br><br>
+				<label class="depolabel1"><b>200&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;X&nbsp;&nbsp;&nbsp;  </b></label><input onchange="depotwo()" type="text" id="depo4" class="depoinput1" name="two"><br><br>
+				<div class="depinp"><label class="depolabel2"><b>100&nbsp;&nbsp;&nbsp;&nbsp;X&nbsp;  </b></label><input onchange="depoone()" type="text" id="depo5" class="depoinput2" name="one"><br><br>
+				<label class="depolabel2"><b>50&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;X&nbsp;&nbsp; </b></label><input onchange="depofifty()" type="text" id="depo6" class="depoinput2" name="fifty"><br><br>
+				<label class="depolabel2"><b>20&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;X&nbsp;&nbsp;  </b></label><input onchange="depotwenty()" type="text" id="depo7" class="depoinput2" name="twenty"><br><br>
+				<label class="depolabel2"><b>10&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;X&nbsp;&nbsp;  </b></label><input onchange="depoten()" type="text" id="depo8" class="depoinput2" name="ten"><br><br></div>
+				<button type="button" class="btn btn-dark" id="depositbtn" style="margin-left:250px;font-size:30px;width:180px" onclick="window.location.href='#depositpin'">DEPOSIT</button>
+				<button type="button" class="btn btn-dark" style="margin-left:80px;font-size:30px;width:150px" onclick="history.back()">CANCEL</button>
+			</div>
+		</div>
+	</div>
+	
+	<!-- Deposit End -->
+	
+	<!-- Enter Pin -->
+	
+	<div id="depositpin" class="overlay">
+		<div class="withdrawpopup">
+			<h2>Deposit Money</h2>
+			<a class="close" href="#">&times;</a>
+			<div class="content"><br>
+				<h1 style="margin-left:200px;">Enter Pin To Deposit:</h1>
+				<div class="pinBox" style="margin-left:250px">
+  					<input class="withdrawpin" name="checkpin2" id="checkpin2" type="password" maxlength=4 autocomplete=off >
+				</div><br><br>
+				<button type="button" class="btn btn-dark" id="withdrawsubmitbtn2" style="margin-left:250px;font-size:25px;width:120px" onclick="depositMoney()">SUBMIT</button>
+				<button type="button" class="btn btn-dark" style="margin-left:50px;font-size:25px;width:120px" onclick="history.back()">CANCEL</button>
+			</div>
+		</div>
+	</div>
+	
+	<!-- Enter Pin End -->
+	
+	<!-- Transfer -->
+	
+	<div id="transfer" class="overlay">
+		<div class="withdrawpopup">
+			<h2>Transfer Money</h2>
+			<a class="close" href="#">&times;</a>
+			<div class="content"><br><br>
+				<button type="button" class="btn btn-dark mainbtn" style="margin-left:220px;font-size:25px;" id="mobile" onclick="window.location.href='#mobileno'">TO MOBILE</button><br><br><br>
+				<button type="button" class="btn btn-dark mainbtn" style="margin-left:220px;font-size:25px;" id="user" onclick="window.location.href='#usern'">TO USERNAME</button>
+			</div>
+		</div>
+	</div>
+	
+	<!-- Mobile -->
+
+	<div id="mobileno" class="overlay">
+		<div class="withdrawpopup">
+			<h2>Transfer Money</h2>
+			<a class="close" href="#">&times;</a>
+			<div class="content">
+				<h3 style="margin-left:200px;">Enter Mobile Number To Transfer Money : </h3><br>
+				<input style="width:150px;margin-left:300px;width:200px;height:50px;font-size:25px;" type="text" name="mobilenumber" id="mobilenumber" maxlength=10><br><br><br>
+				<button type="button" class="btn btn-dark" id="mobilesubmitbtn1" style="margin-left:250px;font-size:25px;width:120px" onclick="mobileRequired()">SUBMIT</button>
+				<button type="button" class="btn btn-dark" style="margin-left:50px;font-size:25px;width:120px" onclick="history.back()">CANCEL</button>
+			</div>
+		</div>
+	</div>
+	
+	<div id="enteramountmobile" class="overlay">
+		<div class="withdrawpopup">
+			<h2>Transfer Money</h2>
+			<a class="close" href="#">&times;</a>
+			<div class="content">
+				<h3 style="margin-left:200px;">Enter Amount: </h3><br>
+				<input style="width:150px;" type="text" name="amountmobile" id="amountmobile" maxlength=5 placeholder="0.00"><br><br><br>
+				<button type="button" class="btn btn-dark" id="mobilesubmitbtn2" style="margin-left:250px;font-size:25px;width:140px" onclick="checkMobile();window.location.href='#mobilepin'">TRANSFER</button>
+				<button type="button" class="btn btn-dark" style="margin-left:50px;font-size:25px;width:120px" onclick="history.back()">CANCEL</button>
+			</div>
+		</div>
+	</div>
+	
+	<!-- Enter Pin -->
+	
+	<div id="mobilepin" class="overlay">
+		<div class="withdrawpopup">
+			<h2>Transfer Money</h2>
+			<a class="close" href="#">&times;</a>
+			<div class="content"><br>
+				<h1 style="margin-left:200px;">Enter Pin To Transfer:</h1>
+				<div class="pinBox" style="margin-left:250px">
+  					<input class="withdrawpin" name="checkpin3" id="checkpin3" type="password" maxlength=4 autocomplete=off >
+				</div><br><br>
+				<h3 id="getname" style="font-size:20px;color:blue;margin-left:250px"></h3><br>
+				<button type="button" class="btn btn-dark" id="mobilesubmitbtn3" style="margin-left:250px;font-size:25px;width:120px" onclick="mobileTransfer()">SUBMIT</button>
+				<button type="button" class="btn btn-dark" style="margin-left:50px;font-size:25px;width:120px" onclick="history.back()">CANCEL</button>
+			</div>
+		</div>
+	</div>
+	
+	<!-- Enter Pin End -->
+
+	<!-- Mobile End -->
+	
+	<!-- User -->
+
+	<div id="usern" class="overlay">
+		<div class="withdrawpopup">
+			<h2>Transfer Money</h2>
+			<a class="close" href="#">&times;</a>
+			<div class="content">
+				<h3 style="margin-left:200px;">Enter Username To Transfer Money : </h3><br>
+				<input style="width:150px;margin-left:300px;width:200px;height:50px;font-size:25px;" type="text" name="usname" id="usname" maxlength=10><br><br><br>
+				<button type="button" class="btn btn-dark" id="usersubmitbtn1" style="margin-left:250px;font-size:25px;width:120px" onclick="usernameRequired()">SUBMIT</button>
+				<button type="button" class="btn btn-dark" style="margin-left:50px;font-size:25px;width:120px" onclick="history.back()">CANCEL</button>
+			</div>
+		</div>
+	</div>
+	
+	<div id="enteramountuser" class="overlay">
+		<div class="withdrawpopup">
+			<h2>Transfer Money</h2>
+			<a class="close" href="#">&times;</a>
+			<div class="content">
+				<h3 style="margin-left:200px;">Enter Amount: </h3><br>
+				<input style="width:150px;" type="text" name="amountuser" id="amountuser" maxlength=5 placeholder="0.00"><br><br><br>
+				<button type="button" class="btn btn-dark" id="usersubmitbtn2" style="margin-left:250px;font-size:25px;width:140px" onclick="checkUsername();window.location.href='#userpin'">TRANSFER</button>
+				<button type="button" class="btn btn-dark" style="margin-left:50px;font-size:25px;width:120px" onclick="history.back()">CANCEL</button>
+			</div>
+		</div>
+	</div>
+	
+	<!-- Enter Pin -->
+	
+	<div id="userpin" class="overlay">
+		<div class="withdrawpopup">
+			<h2>Transfer Money</h2>
+			<a class="close" href="#">&times;</a>
+			<div class="content"><br>
+				<h1 style="margin-left:200px;">Enter Pin To Transfer:</h1>
+				<div class="pinBox" style="margin-left:250px">
+  					<input class="withdrawpin" name="checkpin4" id="checkpin4" type="password" maxlength=4 autocomplete=off >
+				</div><br><br>
+				<h3 id="getname1" style="font-size:20px;color:blue;margin-left:250px"></h3><br>
+				<button type="button" class="btn btn-dark" id="usersubmitbtn3" style="margin-left:250px;font-size:25px;width:120px" onclick="userTransfer()">SUBMIT</button>
+				<button type="button" class="btn btn-dark" style="margin-left:50px;font-size:25px;width:120px" onclick="history.back()">CANCEL</button>
+			</div>
+		</div>
+	</div>
+	
+	<!-- Enter Pin End -->
+	
+	<!-- User End -->
+	
+	<!-- Transfer End -->
+	
+	<!-- Sidebar  -->
+	
+	<!-- Statement -->
+	
+	<div id="statement" style="display:none">
+		<h2>Account Statement</h2>
+		<div>
+			<div id="userDetails">
+				<p id="statementName"></p>
+				<p id="statementUserName"></p>
+				<p id="statementEmail"></p>
+				<p id="statementPhone"></p>
+				<p id="statementBalance"></p>
+			</div>
+			<input style="margin-left:750px;" type="text" id="myInput" onkeyup="searchStatement()" placeholder="Search for dates...." title="Type in a date"><br><br>
+			<table id="myTable" class="table" border="1" style="border-collapse: collapse;">
+				<tbody>
+					<tr>
+						<th>DATE</th>
+						<th>CREDITED</th>
+    					<th>DEBITED</th>
+    					<th>DEPOSITED</th>
+    					<th>WITHDRAWN</th>
+    					<th>BALANCE</th>
+  					</tr>
+					<tr th:each="statements : ${state1}">
+     					<td style="text-align: center" th:text="${statements.date}"></td>
+     					<td style="text-align: center" th:text="${statements.credited}"></td>
+     					<td style="text-align: center" th:text="${statements.debited}"></td>
+     					<td style="text-align: center" th:text="${statements.deposited}"></td>
+     					<td style="text-align: center" th:text="${statements.withdrawn}"></td>
+     					<td style="text-align: center" th:text="${statements.balance}"></td>
+					</tr>
+				</tbody>
+			</table><br>
+			<input style="margin-left:515px;margin-top:50px;" id="statementemail" class="btn btn-info" type="button" value="Email Statement" onclick="emailStatement()">
+			<input style="margin-left:660px;margin-top:-67px;" id="statementprint" class="btn btn-primary" type="button" value="Print Statement" onclick="printStatement()">
+			<input style="margin-left:800px;margin-top:-116px;" id="statementdownload" class="btn btn-secondary" type="button" value="Download Statement" onclick="downloadStatement()"><br><br><br><br>
+		</div>
+	</div>
+	
+	<!-- Statement End -->
+	
+	<div id="wrapper">
+        <div id="sidebar-wrapper"  class="bg-dark">
+            <ul class="sidebar-nav">
+                <li><a id="home" href="#maincontent"><span class="material-symbols-outlined">home</span>Home</a></li>
+                <li><a id="prof" href="#popup1"><span class="material-symbols-outlined">account_circle</span>Profile</a></li>
+                <li><a id="acc" href="#showaccounts"><span class="material-symbols-outlined">list</span>Accounts</a></li>
+                <li><a id="addaccount" href="#addaccounts"><span class="material-symbols-outlined">add_circle</span>Add Account</a></li>
+                <li><a id="state" href="#statement"><span class="material-symbols-outlined">list</span>Statement</a></li>
+                <li><a href="/signin"><span class="material-symbols-outlined">logout</span>Logout</a></li>
+            </ul>
+        </div>
+    </div>
+    
+    <!-- sidebar end -->
+    
+	<div id="maincontent" style="display:none">
+		<h1 id="welcome">Welcome to MNR Bank</h1><br>
+		<button type="button" class="btn btn-dark mainbtn" id="balance" onclick="Swal.fire({
+			  icon: 'success',
+			  title: 'Bank Account Balance Fetched Successfully: <strong>'+deposit+'</strong>',
+			  showConfirmButton: false,
+			  timer: 2000
+			});">BALANCE</button>
+		<button type="button" class="btn btn-dark mainbtn" id="withdraw" onclick="window.location.href='#popup2'">WITHDRAW</button><br><br><br><br>
+		<button type="button" class="btn btn-dark mainbtn" id="deposit" onclick="window.location.href='#deposit'">DEPOSIT</button>
+		<button type="button" class="btn btn-dark mainbtn" id="fast_cash" onclick="window.location.href='#fastcash'">FAST CASH</button><br><br><br><br>
+		<button type="button" class="btn btn-dark mainbtn" id="transfer" onclick="window.location.href='#transfer'">TRANSFER</button>
+		<button type="button" class="btn btn-dark mainbtn" id="pinchange" onclick="window.location.href='/forgotpassword'">PIN CHANGE</button>
+	</div>
+</body>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.js"></script>
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://smtpjs.com/v3/smtp.js"></script>
+<script>
+	
+	var uid = "[[${id}]]";
+	
+	var fname = "[[${firstname}]]";
+	document.getElementById("firstname").innerHTML = fname;
+
+	var lname = "[[${lastname}]]";
+	document.getElementById("nameprint").innerHTML = fname + " " + lname;
+
+	var uname = "[[${username}]]";
+	document.getElementById("usernameprint").innerHTML = uname;
+
+	var email = "[[${email}]]";
+	document.getElementById("emailprint").innerHTML = email;
+
+	var phone = "[[${phone}]]";
+	document.getElementById("phoneprint").innerHTML = phone;
+
+	var rname = "[[${rname}]]";
+	document.getElementById("rolenameprint").innerHTML = rname;
+
+	var deposit = "[[${deposit}]]";
+		
+	var pin = "[[${pin}]]";
+	
+	//Today's date
+	const month = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+	var d = new Date();
+	var today = d.getDate()+" "+month[d.getMonth()]+" "+d.getFullYear();
+	console.log(today);
+	
+	//Profile Photo
+ 	const chooseFile = document.getElementById("choose-file");
+	const imgPreview = document.getElementById("img-preview");
+
+	chooseFile.addEventListener("change", function () {
+		  getImgData();
+		});
+	var imgsrc;
+	var imageName;
+	$('input[type=file]').change(function () {
+        imgsrc=$('#choose-file').val();
+        imageName = chooseFile.files[0].name;
+        console.log("Image Name : "+imageName);
+        console.log("FilePath : "+imgsrc);
+	});
+		
+	function getImgData() {
+		  document.getElementById("profilephoto").style.display = "none";
+		  const files = chooseFile.files[0];
+		  if (files) {
+		    const fileReader = new FileReader();
+		    fileReader.readAsDataURL(files);
+		    fileReader.addEventListener("load", function () {
+		      imgPreview.style.display = "block";
+		      imgPreview.innerHTML = '<img id="pp" src="' + this.result + '" />';
+		      //console.log("Profile Photo SRC = "+document.getElementById("pp").src);
+		      
+		      $.ajax({
+				    url: '/update/photo',
+				    type: "POST",
+				    data: {
+				    	imageName:imageName,
+				    	uid:uid
+				    },
+				    success: function (data) {
+				        console.log(data);
+				    },
+				    error: function (error) {
+				        console.log(`Error ${error}`);
+				    }
+				});  
+		    });    
+		  }
+		}
+	
+	
+	if(rname == "ADMIN"){
+		document.getElementById("maincontent").style.display = "block";
+		document.getElementById("adduser").style.display = "block";
+		document.getElementById("acc").style.display = "block";
+		document.getElementById("addaccount").style.display = "block";
+		var x = document.getElementsByClassName('uidbuttons');
+		for (var i = 0; i < x.length; i ++) {
+		    x[i].style.display = 'block';
+		}
+		var y = document.getElementsByClassName('updateuserbtns');
+		for (var i = 0; i < y.length; i ++) {
+		    y[i].style.display = 'block';
+		}
+	}else{
+		document.getElementById("maincontent").style.display = "block";
+		document.getElementById("adduser").style.display = "none";
+		document.getElementById("acc").style.display = "none";
+		document.getElementById("addaccount").style.display = "none";
+		document.getElementById("addaccounts").style.display = "none";
+		var x = document.getElementsByClassName('uidbuttons');
+		for (var i = 0; i < x.length; i ++) {
+		    x[i].style.display = 'none';
+		}
+		var y = document.getElementsByClassName('updateuserbtns');
+		for (var i = 0; i < y.length; i ++) {
+		    y[i].style.display = 'none';
+		}
+	}
+	function toggleProfile() {
+		var x = document.getElementById("profile");
+		if (x.style.display === "block") {
+			x.style.display = "none";
+		} else {
+			x.style.display = "block";
+		}
+	}	
+	//Clearing inputs
+	const inputs1 = document.querySelectorAll('#withdrawinput','#checkpin','#checkpin1');
+	  inputs1.forEach(input => {
+	    input.value = '';
+	  });
+	  
+	var counter = 0;
+	
+	function withdraw(){
+		var uname = "[[${username}]]";
+		var pin = "[[${pin}]]";
+		var deposit = "[[${deposit}]]";
+		var amountToWithdraw = document.getElementById("withdrawinput").value;
+		var enteredPin = document.getElementById("checkpin").value;
+		console.log("EnteredAmount : "+amountToWithdraw);
+		console.log("EnteredPin : "+enteredPin);
+		if(pin == enteredPin){
+			if(+amountToWithdraw <= +deposit && +amountToWithdraw > 0){
+				$.ajax({
+				    url: '/update',
+				    type: "POST",
+				    data: {
+				    	uname:uname,
+				        amountToWithdraw:amountToWithdraw
+				    },
+				    async: false,
+				    success: function (data) {
+				        console.log(data);
+				        Swal.fire({
+					  		  icon: 'success',
+					  		  title: 'Congratulations! Amount Withdrawn Successfully!',
+					  		  showConfirmButton: false,
+					  		  timer: 1500
+					  		}).then(function() {
+					  			Email.send({
+									  SecureToken : "8ee728d5-0750-4e96-9095-8fa4a4de44a5",
+							          To : email,
+							          From : 'manumaanowais809@gmail.com',
+							          ReplyTo : 'manumaanowais809@gmail.com',
+							          Subject : "Amount "+amountToWithdraw+" Withdrawn From "+uname,
+							          Body : "<br><div style='padding:2px;border:2px solid purple;border-radius:8px;width:300px;'>"
+							        	 	 +"<p><img style='margin-left:10px;width:90px;height:auto' src='https://t3.ftcdn.net/jpg/04/47/48/30/360_F_447483048_9chFFBvYxQsI76cNBwyfVXIbvkEvzz48.jpg'/><p style='margin-left:170px;margin-top:-20px;'>"+today+"</p></p><br>"
+							        	  	 +"<div style='margin-left:20px;padding:3px;background-color:#F2F2F2;border:1px solid black;border-radius:8px;width:250px;'>"
+					  						 +"<table>"
+					  							+"<tr>"
+					  								+"<td>Withdrawn From "+phone+"</td>"
+					  								+"<td id='emailamount5'>RS."+amountToWithdraw+"</td>"
+					  							+"</tr>"
+					  							+"<tr>"
+					  								+"<td>Txn. ID</td>"
+					  								+"<td id='emailtxnid5'>T338096512816786345</td>"
+					  							+"</tr>"
+					  							+"<tr>"
+					  								+"<td>Txn. Status</td>"
+					  								+"<td style='color:green' id='emailtxnstatus5'>Successful</td>"
+					  							+"</tr>"
+					  							+"<tr>"
+					  								+"<td>Bank Ref. No.</td>"
+					  								+"<td id='emailrefno5'>7654678654324357865</td>"
+					  							+"</tr>"
+					  						+"</table>"
+					  						+"</div>"
+					  						+"<br>"
+					  						+"<div style='margin-left:20px'>"
+					  							+"Hi <b>"+fname+" "+lname+" </b>"
+							          			+"<br>Your account is debited by INR."+amountToWithdraw+".00."
+							          			+"<br><br>If you have not made this transaction or notice any error please contact us at <a href='#'>manumaanowais809@gmail.com</a> "
+							          			+"<br><br><br>Thank you for Choosing MNR Bank."
+							          			+"<br><br><br>Cheers!<br>Team MNR"
+							          		+"</div>"
+							          		+"</div>"
+					                  }).then(
+							           console.log("Withdraw Email Sent")
+							        );
+					  			window.location.href = window.location.href.split('#')[0] + '#maincontent';
+					  			location.reload(true);
+
+					  			// Scroll to the div after the page is reloaded
+					  			window.addEventListener('load', function() {
+					  			  document.querySelector(window.location.hash).scrollIntoView();
+					  			});
+					  		});
+				    },
+				    error: function (error) {
+				        console.log(`Error ${error}`);
+				    }
+				});
+			}else{
+				Swal.fire({
+					  icon: 'error',
+					  title: 'Oops...',
+					  text: 'Insufficient Balance!'
+					})
+			}
+		}else{
+			console.log("Wrong Pin");
+			counter++;
+			Swal.fire({
+				  icon: 'error',
+				  title: 'Oops...',
+				  text: counter+' Wrong Pin Entered!'
+				})
+			if(counter == 3){
+				document.getElementById("withdrawsubmitbtn").disabled = true;
+				document.getElementById("withdrawbtn").disabled = true;
+				Swal.fire({
+					  icon: 'error',
+					  title: 'Oops...',
+					  text: 'You Have Ran Out Of Attempts! Sign In Again'
+					})
+			}
+		}
+	}
+		
+	var amountToWithdraw=0;
+	function twok(){
+		amountToWithdraw+=2000;
+		document.getElementById("fastcashinput").value=amountToWithdraw;
+		console.log(amountToWithdraw);	
+	}
+	function onek(){
+		amountToWithdraw+=1000;
+		document.getElementById("fastcashinput").value=amountToWithdraw;
+		console.log(amountToWithdraw);	
+	}
+	function five(){
+		amountToWithdraw+=500;
+		document.getElementById("fastcashinput").value=amountToWithdraw;
+		console.log(amountToWithdraw);	
+	}
+	function two(){
+		amountToWithdraw+=200;
+		document.getElementById("fastcashinput").value=amountToWithdraw;
+		console.log(amountToWithdraw);	
+	}
+	function one(){
+		amountToWithdraw+=100;
+		document.getElementById("fastcashinput").value=amountToWithdraw;
+		console.log(amountToWithdraw);	
+	}
+	function fifty(){
+		amountToWithdraw+=50;
+		document.getElementById("fastcashinput").value=amountToWithdraw;
+		console.log(amountToWithdraw);	
+	}
+	
+	var counter1 = 0;
+	
+	function fastcash(){
+		var uname = "[[${username}]]";
+		var pin = "[[${pin}]]";
+		var deposit = "[[${deposit}]]";
+		var amountToWithdraw = document.getElementById("fastcashinput").value;
+		var enteredPin = document.getElementById("checkpin1").value;
+		console.log("EnteredAmount : "+amountToWithdraw);
+		console.log("EnteredPin : "+enteredPin);
+		if(pin == enteredPin){
+			if(+amountToWithdraw <= +deposit && +amountToWithdraw > 0){
+				$.ajax({
+				    url: '/update',
+				    type: "POST",
+				    data: {
+				    	uname:uname,
+				        amountToWithdraw:amountToWithdraw
+				    },
+				    async: false,
+				    success: function (data) {
+				        console.log(data);
+				        Swal.fire({
+					  		  icon: 'success',
+					  		  title: 'Congratulations! Amount Withdrawn Successfully!',
+					  		  showConfirmButton: false,
+					  		  timer: 1500
+					  		}).then(function() {
+					  			Email.send({
+									  SecureToken : "8ee728d5-0750-4e96-9095-8fa4a4de44a5",
+							          To : email,
+							          From : 'manumaanowais809@gmail.com',
+							          ReplyTo : 'manumaanowais809@gmail.com',
+							          Subject : "Amount "+amountToWithdraw+" Withdrawn From "+uname,
+							          Body : "<br><div style='padding:2px;border:2px solid purple;border-radius:8px;width:300px;'>"
+							        	 	 +"<p><img style='margin-left:10px;width:90px;height:auto' src='https://t3.ftcdn.net/jpg/04/47/48/30/360_F_447483048_9chFFBvYxQsI76cNBwyfVXIbvkEvzz48.jpg'/><p style='margin-left:170px;margin-top:-20px;'>"+today+"</p></p><br>"
+							        	  	 +"<div style='margin-left:20px;padding:3px;background-color:#F2F2F2;border:1px solid black;border-radius:8px;width:250px;'>"
+					  						 +"<table>"
+					  							+"<tr>"
+					  								+"<td>Withdrawn From "+phone+"</td>"
+					  								+"<td id='emailamount4'>RS."+amountToWithdraw+"</td>"
+					  							+"</tr>"
+					  							+"<tr>"
+					  								+"<td>Txn. ID</td>"
+					  								+"<td id='emailtxnid4'>T338096512816786345</td>"
+					  							+"</tr>"
+					  							+"<tr>"
+					  								+"<td>Txn. Status</td>"
+					  								+"<td style='color:green' id='emailtxnstatus4'>Successful</td>"
+					  							+"</tr>"
+					  							+"<tr>"
+					  								+"<td>Bank Ref. No.</td>"
+					  								+"<td id='emailrefno4'>7654678654324357865</td>"
+					  							+"</tr>"
+					  						+"</table>"
+					  						+"</div>"
+					  						+"<br>"
+					  						+"<div style='margin-left:20px'>"
+					  							+"Hi <b>"+fname+" "+lname+" </b>"
+							          			+"<br>Your account is debited by INR."+amountToWithdraw+".00."
+							          			+"<br><br>If you have not made this transaction or notice any error please contact us at <a href='#'>manumaanowais809@gmail.com</a> "
+							          			+"<br><br><br>Thank you for Choosing MNR Bank."
+							          			+"<br><br><br>Cheers!<br>Team MNR"
+							          		+"</div>"
+							          		+"</div>"
+					                  }).then(
+							           console.log("Withdraw Email Sent")
+							        );
+					  			window.location.href = window.location.href.split('#')[0] + '#maincontent';
+					  			location.reload(true);
+
+					  			// Scroll to the div after the page is reloaded
+					  			window.addEventListener('load', function() {
+					  			  document.querySelector(window.location.hash).scrollIntoView();
+					  			});
+					  		});
+				    },
+				    error: function (error) {
+				        console.log(`Error ${error}`);
+				    }
+				});
+			}else{
+				Swal.fire({
+					  icon: 'error',
+					  title: 'Oops...',
+					  text: 'Insufficient Balance!'
+					})
+			}
+		}else{
+			console.log("Wrong Pin");
+			counter1++;
+			Swal.fire({
+				  icon: 'error',
+				  title: 'Oops...',
+				  text: counter1+' Wrong Pin Entered!'
+				})
+			if(counter1 == 3){
+				document.getElementById("withdrawsubmitbtn1").disabled = true;
+				document.getElementById("fastwithdrawbtn").disabled = true;
+				Swal.fire({
+					  icon: 'error',
+					  title: 'Oops...',
+					  text: 'You Have Ran Out Of Attempts! Sign In Again'
+					})
+			}
+		}
+	}
+	
+	//For clearing input fields
+	const inputs = document.querySelectorAll('#checkpin1');
+	  inputs.forEach(input => {
+	    input.value = '';
+	  });
+	  
+	  //Deposit
+	  var depositinput1 = 0;
+	  function depotwok(){
+		  var dep1 = document.getElementById("depo1").value;
+		  dep1*=2000;
+		  depositinput1+=dep1;
+		  console.log(depositinput1);
+		  document.getElementById("depositinput").value = depositinput1;
+		  document.getElementById("depo1").readOnly=true;
+	  }
+	  function depoonek(){
+		  var dep2 = document.getElementById("depo2").value;
+		  dep2*=1000;
+		  depositinput1+=dep2;
+		  console.log(depositinput1);
+		  document.getElementById("depositinput").value = depositinput1;
+		  document.getElementById("depo2").readOnly=true;
+	  }
+	  function depofive(){
+		  var dep3 = document.getElementById("depo3").value;
+		  dep3*=500;
+		  depositinput1+=dep3;
+		  console.log(depositinput1);
+		  document.getElementById("depositinput").value = depositinput1;
+		  document.getElementById("depo3").readOnly=true;
+	  }
+	  function depotwo(){
+		  var dep4 = document.getElementById("depo4").value;
+		  dep4*=200;
+		  depositinput1+=dep4;
+		  console.log(depositinput1);
+		  document.getElementById("depositinput").value = depositinput1;
+		  document.getElementById("depo4").readOnly=true;
+	  }
+	  function depoone(){
+		  var dep5 = document.getElementById("depo5").value;
+		  dep5*=100;
+		  depositinput1+=dep5;
+		  console.log(depositinput1);
+		  document.getElementById("depositinput").value = depositinput1;
+		  document.getElementById("depo5").readOnly=true;
+	  }
+	  function depofifty(){
+		  var dep6 = document.getElementById("depo6").value;
+		  dep6*=50;
+		  depositinput1+=dep6;
+		  console.log(depositinput1);
+		  document.getElementById("depositinput").value = depositinput1;
+		  document.getElementById("depo6").readOnly=true;
+	  }
+	  function depotwenty(){
+		  var dep7 = document.getElementById("depo7").value;
+		  dep7*=20;
+		  depositinput1+=dep7;
+		  console.log(depositinput1);
+		  document.getElementById("depositinput").value = depositinput1;
+		  document.getElementById("depo7").readOnly=true;
+	  }
+	  function depoten(){
+		  var dep8 = document.getElementById("depo8").value;
+		  dep8*=10;
+		  depositinput1+=dep8;
+		  console.log(depositinput1);
+		  document.getElementById("depositinput").value = depositinput1;
+		  document.getElementById("depo8").readOnly=true;
+	  }
+	  
+	  //Deposit
+	  
+	var counter2 = 0;
+	function depositMoney(){
+		var uname = "[[${username}]]";
+		var pin = "[[${pin}]]";
+		var deposit = "[[${deposit}]]";
+		var amountToDeposit = document.getElementById("depositinput").value;
+		var enteredPin = document.getElementById("checkpin2").value;
+		console.log("EnteredAmount : "+amountToDeposit);
+		console.log("EnteredPin : "+enteredPin);
+		if(pin == enteredPin){
+			if(+amountToDeposit > 0 && +amountToDeposit <= 50000){
+				$.ajax({
+				    url: '/update/deposit',
+				    type: "POST",
+				    data: {
+				    	uname:uname,
+				    	amountToDeposit:amountToDeposit
+				    },
+				    success: function (data) {
+				        console.log(data);
+				        Swal.fire({
+					  		  icon: 'success',
+					  		  title: 'Congratulations! Amount Deposited Successfully!',
+					  		  showConfirmButton: false,
+					  		  timer: 1500
+					  		}).then(function() {
+					  			Email.send({
+								  SecureToken : "8ee728d5-0750-4e96-9095-8fa4a4de44a5",
+						          To : email,
+						          From : 'manumaanowais809@gmail.com',
+						          ReplyTo : 'manumaanowais809@gmail.com',
+						          Subject : "Amount INR "+amountToDeposit+" Deposited In "+uname,
+						          Body : "<br><div style='padding:2px;border:2px solid purple;border-radius:8px;width:300px;'>"
+					        	 	 +"<p><img style='margin-left:10px;width:90px;height:auto' src='https://t3.ftcdn.net/jpg/04/47/48/30/360_F_447483048_9chFFBvYxQsI76cNBwyfVXIbvkEvzz48.jpg'/><p style='margin-left:170px;margin-top:-20px;'>"+today+"</p></p><br>"
+					        	  	 +"<div style='margin-left:20px;padding:3px;background-color:#F2F2F2;border:1px solid black;border-radius:8px;width:250px;'>"
+			  						 +"<table>"
+			  							+"<tr>"
+			  								+"<td>Deposited In "+phone+"</td>"
+			  								+"<td id='emailamount3'>RS."+amountToDeposit+"</td>"
+			  							+"</tr>"
+			  							+"<tr>"
+			  								+"<td>Txn. ID</td>"
+			  								+"<td id='emailtxnid3'>T338096512816786345</td>"
+			  							+"</tr>"
+			  							+"<tr>"
+			  								+"<td>Txn. Status</td>"
+			  								+"<td style='color:green' id='emailtxnstatus3'>Successful</td>"
+			  							+"</tr>"
+			  							+"<tr>"
+			  								+"<td>Bank Ref. No.</td>"
+			  								+"<td id='emailrefno3'>7654678654324357865</td>"
+			  							+"</tr>"
+			  						+"</table>"
+			  						+"</div>"
+			  						+"<br>"
+			  						+"<div style='margin-left:20px'>"
+			  							+"Hi <b>"+fname+" "+lname+" </b>"
+					          			+"<br>Your account is credited by INR."+amountToDeposit+".00."
+					          			+"<br><br>If you have not made this transaction or notice any error please contact us at <a href='#'>manumaanowais809@gmail.com</a> "
+					          			+"<br><br><br>Thank you for Choosing MNR Bank."
+					          			+"<br><br><br>Cheers!<br>Team MNR"
+					          		+"</div>"
+					          		+"</div>"
+				                  }).then(
+						           console.log("Deposit Email Sent")
+						        );
+					  			window.location.href = window.location.href.split('#')[0] + '#maincontent';
+					  			location.reload(true);
+
+					  			// Scroll to the div after the page is reloaded
+					  			window.addEventListener('load', function() {
+					  			  document.querySelector(window.location.hash).scrollIntoView();
+					  			});
+					  		});
+				    },
+				    error: function (error) {
+				        console.log(`Error ${error}`);
+				    }
+				});
+			}else{
+				Swal.fire({
+					  icon: 'error',
+					  title: 'Oops...',
+					  text: 'Invalid Amount!'
+					})
+			}
+		}else{
+			console.log("Wrong Pin");
+			counter2++;
+			Swal.fire({
+				  icon: 'error',
+				  title: 'Oops...',
+				  text: counter2+' Wrong Pin Entered!'
+				})
+			if(counter2 == 3){
+				document.getElementById("withdrawsubmitbtn2").disabled = true;
+				document.getElementById("depositbtn").disabled = true;
+				Swal.fire({
+					  icon: 'error',
+					  title: 'Oops...',
+					  text: 'You Have Ran Out Of Attempts! Sign In Again'
+					})
+			}
+		}
+	}
+	
+	function mobileRequired(){
+		var p = "";
+		p = document.getElementById("mobilenumber").value;
+		if(p==0 || p==null || p==""){
+			Swal.fire({
+				  title: 'Mobile Number Is Required!',
+				  showClass: {
+				    popup: 'animate__animated animate__fadeInDown'
+				  },
+				  hideClass: {
+				    popup: 'animate__animated animate__fadeOutUp'
+				  }
+				}).then(function() {
+					history.back();
+	  			});
+		}else{
+				window.location.href='#enteramountmobile';
+		}
+	}
+	
+	var reciever1="";
+	function checkMobile(){
+		var phone = document.getElementById("mobilenumber").value;
+		$.get("/mobile/getname/"+phone, function(data, status){
+			reciever1= data;
+			console.log("This is :"+reciever1);
+			document.getElementById("getname").innerHTML = "You Are Transferring To : " + reciever1;
+			if(reciever1="" || reciever1 == null || reciever1 == false){
+				Swal.fire({
+					  icon: 'error',
+					  title: 'Oops...',
+					  text: 'Mobile Number Does Not Exist!'
+					}).then(function() {
+			  			window.location.href = window.location.href.split('#')[0] + '#maincontent';
+			  			location.reload(true);
+
+			  			// Scroll to the div after the page is reloaded
+			  			window.addEventListener('load', function() {
+			  			  document.querySelector(window.location.hash).scrollIntoView();
+			  			});
+			  		});
+			}
+		});
+	}
+	
+	var counter3 = 0;
+	
+	function mobileTransfer(){
+		var uname = "[[${username}]]";
+		var phone = "[[${phone}]]";
+		var pin = "[[${pin}]]";
+		var deposit = "[[${deposit}]]";
+		var amountToTransfer = document.getElementById("amountmobile").value;
+		var phoneNumber = document.getElementById("mobilenumber").value;
+		var enteredPin = document.getElementById("checkpin3").value;
+		console.log("EnteredAmount : "+amountToTransfer);
+		console.log("MobileNumber : "+phoneNumber);
+		console.log("EnteredPin : "+enteredPin);
+		console.log("Sender : "+uname);
+		console.log("Reciever : "+reciever1);
+		if(phone!=phoneNumber){
+			if(pin == enteredPin){
+				if(+amountToTransfer > 0 && +amountToTransfer <= deposit){
+					$.ajax({
+					    url: '/update/mobile/transfer',
+					    type: "POST",
+					    data: {
+					    	uname:uname,
+					    	amountToTransfer:amountToTransfer,
+					    	phoneNumber:phoneNumber
+					    },
+					    success: function (data) {
+					        console.log(data);
+					        Swal.fire({
+						  		  icon: 'success',
+						  		  title: 'Congratulations! Amount Transferred Successfully!',
+						  		  showConfirmButton: false,
+						  		  timer: 1500
+						  		}).then(function() {
+						  			Email.send({
+										  SecureToken : "8ee728d5-0750-4e96-9095-8fa4a4de44a5",
+								          To : email,
+								          From : 'manumaanowais809@gmail.com',
+								          ReplyTo : 'manumaanowais809@gmail.com',
+								          Subject : "Sent RS."+amountToTransfer+" to "+phoneNumber,
+								          Body : "<br><div style='padding:2px;border:2px solid purple;border-radius:8px;width:300px;'>"
+								        	 	 +"<p><img style='margin-left:10px;width:90px;height:auto' src='https://t3.ftcdn.net/jpg/04/47/48/30/360_F_447483048_9chFFBvYxQsI76cNBwyfVXIbvkEvzz48.jpg'/><p style='margin-left:170px;margin-top:-20px;'>"+today+"</p></p><br>"
+								        	  	 +"<div style='margin-left:20px;padding:3px;background-color:#F2F2F2;border:1px solid black;border-radius:8px;width:250px;'>"
+						  						 +"<table>"
+						  							+"<tr>"
+						  								+"<td>Paid To "+phoneNumber+"</td>"
+						  								+"<td id='emailamount1'>RS."+amountToTransfer+"</td>"
+						  							+"</tr>"
+						  							+"<tr>"
+						  								+"<td>Txn. ID</td>"
+						  								+"<td id='emailtxnid1'>T338096512816786345</td>"
+						  							+"</tr>"
+						  							+"<tr>"
+						  								+"<td>Txn. Status</td>"
+						  								+"<td style='color:green' id='emailtxnstatus1'>Successful</td>"
+						  							+"</tr>"
+						  							+"<tr>"
+						  								+"<td>Debited From</td>"
+						  								+"<td id='emaildebitedfrom1'>"+uname+"</td>"
+						  							+"</tr>"
+						  							+"<tr>"
+						  								+"<td>Bank Ref. No.</td>"
+						  								+"<td id='emailrefno1'>7654678654324357865</td>"
+						  							+"</tr>"
+						  							+"<tr>"
+						  								+"<td>Message</td>"
+						  								+"<td id='emailmessage1'>Gift</td>"
+						  							+"</tr>"
+						  						+"</table>"
+						  						+"</div>"
+						  						+"<br>"
+						  						+"<div style='margin-left:20px'>"
+						  							+"Hi <b>"+fname+" "+lname+" </b>"
+								          			+"<br>Your account is debited by INR."+amountToTransfer+".00 and credited to "+phoneNumber
+								          			+"<br><br>If you have not made this transaction or notice any error please contact us at <a href='#'>manumaanowais809@gmail.com</a> "
+								          			+"<br><br><br>Thank you for Choosing MNR Bank."
+								          			+"<br><br><br>Cheers!<br>Team MNR"
+								          		+"</div>"
+								          		+"</div>"
+						                  }).then(
+								           console.log("Transfer Email Sent")
+								        );
+						  			window.location.href = window.location.href.split('#')[0] + '#maincontent';
+						  			location.reload(true);
+	
+						  			// Scroll to the div after the page is reloaded
+						  			window.addEventListener('load', function() {
+						  			  document.querySelector(window.location.hash).scrollIntoView();
+						  			});
+						  		});
+					    },
+					    error: function (error) {
+					        console.log(`Error ${error}`);
+					    }
+					});
+			}else{
+					Swal.fire({
+						  icon: 'error',
+						  title: 'Oops...',
+						  text: 'Insufficient Balance!'
+						})
+				}
+			}else{
+				console.log("Wrong Pin");
+				counter3++;
+				Swal.fire({
+					  icon: 'error',
+					  title: 'Oops...',
+					  text: counter3+' Wrong Pin Entered!'
+					})
+				if(counter3 == 3){
+					document.getElementById("mobilesubmitbtn1").disabled = true;
+					document.getElementById("mobilesubmitbtn2").disabled = true;
+					document.getElementById("mobilesubmitbtn3").disabled = true;
+					Swal.fire({
+						  icon: 'error',
+						  title: 'Oops...',
+						  text: 'You Have Ran Out Of Attempts! Sign In Again'
+						})
+				}
+			}
+			}else{
+				Swal.fire({
+					  icon: 'error',
+					  title: 'Oops...',
+						  text: 'You Can Not Transfer Money To Your Own Account!'
+					}).then(function() {
+			  			window.location.href = window.location.href.split('#')[0] + '#maincontent';
+			  			location.reload(true);	
+			  			// Scroll to the div after the page is reloaded
+			  			window.addEventListener('load', function() {
+		  			  	document.querySelector(window.location.hash).scrollIntoView();
+		  				});
+		  			});
+			}
+		}
+	
+	function usernameRequired(){
+		var p1 = "";
+		p1 = document.getElementById("usname").value;
+		if(p1==0 || p1==null || p1==""){
+			Swal.fire({
+				  title: 'Username Is Required!',
+				  showClass: {
+				    popup: 'animate__animated animate__fadeInDown'
+				  },
+				  hideClass: {
+				    popup: 'animate__animated animate__fadeOutUp'
+				  }
+				}).then(function() {
+					history.back();
+	  			});
+		}else{
+				window.location.href='#enteramountuser';
+		}
+	}
+	
+	var reciever2="";
+	function checkUsername(){
+		var name = document.getElementById("usname").value;
+		$.get("/user/getname/"+name, function(data, status){
+			reciever2= data;
+			console.log("This is :"+reciever2);
+			document.getElementById("getname1").innerHTML = "You Are Transferring To : " + reciever2;
+			if(reciever2="" || reciever2 == null || reciever2 == false){
+				Swal.fire({
+					  icon: 'error',
+					  title: 'Oops...',
+					  text: 'Username Does Not Exist!'
+					}).then(function() {
+			  			window.location.href = window.location.href.split('#')[0] + '#maincontent';
+			  			location.reload(true);
+
+			  			// Scroll to the div after the page is reloaded
+			  			window.addEventListener('load', function() {
+			  			  document.querySelector(window.location.hash).scrollIntoView();
+			  			});
+			  		});
+			}
+		});
+	}
+	
+	var counter4 = 0;
+	
+	function userTransfer(){
+		var uname = "[[${username}]]";
+		var phone = "[[${phone}]]";
+		var pin = "[[${pin}]]";
+		var deposit = "[[${deposit}]]";
+		var amountToTransfer = document.getElementById("amountuser").value;
+		var usenam = document.getElementById("usname").value;
+		var enteredPin = document.getElementById("checkpin4").value;
+		console.log("EnteredAmount : "+amountToTransfer);
+		console.log("Username : "+usenam);
+		console.log("EnteredPin : "+enteredPin);
+		console.log("Sender : "+uname);
+		console.log("Reciever : "+reciever2);
+		if(uname!=usenam){
+			if(pin == enteredPin){
+				if(+amountToTransfer > 0 && +amountToTransfer <= deposit){
+					$.ajax({
+					    url: '/update/user/transfer',
+					    type: "POST",
+					    data: {
+					    	uname:uname,
+					    	amountToTransfer:amountToTransfer,
+					    	usenam:usenam
+					    },
+					    success: function (data) {
+					        console.log(data);
+					        Swal.fire({
+						  		  icon: 'success',
+						  		  title: 'Congratulations! Amount Transferred Successfully!',
+						  		  showConfirmButton: false,
+						  		  timer: 1500
+						  		}).then(function() {
+						  			Email.send({
+										  SecureToken : "8ee728d5-0750-4e96-9095-8fa4a4de44a5",
+								          To : email,
+								          From : 'manumaanowais809@gmail.com',
+								          ReplyTo : 'manumaanowais809@gmail.com',
+								          Subject : "Sent RS."+amountToTransfer+" to "+usenam,
+								          Body : "<br><div style='padding:2px;border:2px solid purple;border-radius:8px;width:300px;'>"
+								        	 	 +"<p><img style='margin-left:10px;width:90px;height:auto' src='https://t3.ftcdn.net/jpg/04/47/48/30/360_F_447483048_9chFFBvYxQsI76cNBwyfVXIbvkEvzz48.jpg'/><p style='margin-left:170px;margin-top:-20px;'>"+today+"</p></p><br>"
+								        	  	 +"<div style='margin-left:20px;padding:3px;background-color:#F2F2F2;border:1px solid black;border-radius:8px;width:250px;'>"
+						  						 +"<table>"
+						  							+"<tr>"
+						  								+"<td>Paid To "+usenam+"</td>"
+						  								+"<td id='emailamount2'>RS."+amountToTransfer+"</td>"
+						  							+"</tr>"
+						  							+"<tr>"
+						  								+"<td>Txn. ID</td>"
+						  								+"<td id='emailtxnid2'>T338096512816786345</td>"
+						  							+"</tr>"
+						  							+"<tr>"
+						  								+"<td>Txn. Status</td>"
+						  								+"<td style='color:green' id='emailtxnstatus2'>Successful</td>"
+						  							+"</tr>"
+						  							+"<tr>"
+						  								+"<td>Debited From</td>"
+						  								+"<td id='emaildebitedfrom2'>"+uname+"</td>"
+						  							+"</tr>"
+						  							+"<tr>"
+						  								+"<td>Bank Ref. No.</td>"
+						  								+"<td id='emailrefno2'>7654678654324357865</td>"
+						  							+"</tr>"
+						  							+"<tr>"
+						  								+"<td>Message</td>"
+						  								+"<td id='emailmessage2'>Gift</td>"
+						  							+"</tr>"
+						  						+"</table>"
+						  						+"</div>"
+						  						+"<br>"
+						  						+"<div style='margin-left:20px'>"
+						  							+"Hi <b>"+fname+" "+lname+" </b>"
+								          			+"<br>Your account is debited by INR."+amountToTransfer+".00 and credited to "+usenam
+								          			+"<br><br>If you have not made this transaction or notice any error please contact us at <a href='#'>manumaanowais809@gmail.com</a> "
+								          			+"<br><br><br>Thank you for Choosing MNR Bank."
+								          			+"<br><br><br>Cheers!<br>Team MNR"
+								          		+"</div>"
+								          		+"</div>"
+						                  }).then(
+								           console.log("Transfer Email Sent")
+								        );
+						  			window.location.href = window.location.href.split('#')[0] + '#maincontent';
+						  			location.reload(true);
+	
+						  			// Scroll to the div after the page is reloaded
+						  			window.addEventListener('load', function() {
+						  			  document.querySelector(window.location.hash).scrollIntoView();
+						  			});
+						  		});
+					    },
+					    error: function (error) {
+					        console.log(`Error ${error}`);
+					    }
+					});
+			}else{
+					Swal.fire({
+						  icon: 'error',
+						  title: 'Oops...',
+						  text: 'Insufficient Balance!'
+						})
+				}
+			}else{
+				console.log("Wrong Pin");
+				counter4++;
+				Swal.fire({
+					  icon: 'error',
+					  title: 'Oops...',
+					  text: counter4+' Wrong Pin Entered!'
+					})
+				if(counter4 == 4){
+					document.getElementById("usersubmitbtn1").disabled = true;
+					document.getElementById("usersubmitbtn2").disabled = true;
+					document.getElementById("usersubmitbtn3").disabled = true;
+					Swal.fire({
+						  icon: 'error',
+						  title: 'Oops...',
+						  text: 'You Have Ran Out Of Attempts! Sign In Again'
+						})
+				}
+			}
+			}else{
+				Swal.fire({
+					  icon: 'error',
+					  title: 'Oops...',
+						  text: 'You Can Not Transfer Money To Your Own Account!'
+					}).then(function() {
+			  			window.location.href = window.location.href.split('#')[0] + '#maincontent';
+			  			location.reload(true);	
+			  			// Scroll to the div after the page is reloaded
+			  			window.addEventListener('load', function() {
+		  			  	document.querySelector(window.location.hash).scrollIntoView();
+		  				});
+		  			});
+			}
+		}
+	
+	//Delete User
+	function delUser(uid){
+		Swal.fire({
+		  title: 'Are you sure?',
+		  text: "You won't be able to revert this!",
+		  icon: 'warning',
+		  showCancelButton: true,
+		  confirmButtonColor: '#3085d6',
+		  cancelButtonColor: '#d33',
+		  confirmButtonText: 'Yes, Delete This User!'
+		}).then((result) => {
+		  if (result.isConfirmed) {
+		  	try {
+		  		const response = fetch('/delete/'+uid, {
+		  	  		method: "delete"
+		  		});
+		  		Swal.fire(
+				      'Deleted!',
+				      'User has been deleted.',
+				      'success'
+				    )
+				    window.location.reload();
+				}catch (err) {
+				    resultElement.innerHTML = htmlizeResponse(err.message);
+				 }
+		  	}
+		});	
+		} 
+	
+	function updateUsers(userid,userusername,userpin,userfirstname,userlastname,useremail,userphone,userdeposit,useragreed){
+		//alert(userid+", "+userusername+", "+userpin);
+		document.forms['userform']['id'].value = userid;
+		document.forms['userform']['username'].value = userusername;
+		document.forms['userform']['pin'].value = userpin;
+		document.forms['userform']['firstName'].value = userfirstname;
+		document.forms['userform']['lastName'].value = userlastname;
+		document.forms['userform']['email'].value = useremail;
+		document.forms['userform']['phone'].value = userphone;
+		document.forms['userform']['deposit'].value = userdeposit;
+		document.forms['userform']['agreed'].value = useragreed;
+		$.ajax({
+		    url: '/user/update',
+		    type: "POST",
+		    data: {
+		    	userid:userid,
+		    	userusername:userusername,
+		    	userpin:userpin,
+		    	userfirstname:userfirstname,
+		    	userlastname:userlastname,
+		    	useremail:useremail,
+		    	userphone:userphone,
+		    	userdeposit:userdeposit,
+		    	useragreed:useragreed
+		    },
+		    dataType: "json",
+		    success: function (data) {
+		        console.log(data);
+		    },
+		    error: function (error) {
+		        console.log(`Error ${error}`);
+		    }
+		});
+	}
+	
+	//Statement
+	document.getElementById("statementName").innerHTML = "<b>Account Holder Name : </b>"+fname+" "+lname;
+	document.getElementById("statementUserName").innerHTML = "<b>Account Holder Username : </b>"+uname;
+	document.getElementById("statementEmail").innerHTML = "<b>Residential Email Address : </b>"+email;
+	document.getElementById("statementPhone").innerHTML = "<b>Residential Phone Number : </b>"+phone;
+	document.getElementById("statementBalance").innerHTML = "<b>Total Balance : </b>"+deposit;
+	
+	
+	function searchStatement() {
+		  var input, filter, table, tr, td, i, txtValue;
+		  input = document.getElementById("myInput");
+		  filter = input.value.toUpperCase();
+		  table = document.getElementById("myTable");
+		  tr = table.getElementsByTagName("tr");
+		  for (i = 0; i < tr.length; i++) {
+		    td = tr[i].getElementsByTagName("td")[0];
+		    if (td) {
+		      txtValue = td.textContent || td.innerText;
+		      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+		        tr[i].style.display = "";
+		      } else {
+		        tr[i].style.display = "none";
+		      }
+		    }       
+		  }
+		}
+	
+	function printStatement(){
+		document.getElementById("statementprint").style.display = 'none';
+		document.getElementById("statementemail").style.display = 'none';
+		document.getElementById("statementdownload").style.display = 'none';
+		document.getElementById("myInput").style.display = 'none';
+		var miniStatement = document.getElementById("statement").innerHTML;
+        var a = window.open('', '', 'height=900, width=1200');
+        a.document.write('<html>');
+        a.document.write('<body> <h1>MNR Bank</h1><p>Plot No.18, Brindavan Colony, Zaheerabad, Sangareddy Dist, 502220, Telangana State</p>');
+        a.document.write(miniStatement);
+        document.getElementById("statementprint").style.display = 'inline';
+    	document.getElementById("statementemail").style.display = 'inline';
+    	document.getElementById("statementdownload").style.display = 'inline';
+    	document.getElementById("myInput").style.display = 'inline';
+        a.document.write('</body></html>');
+        a.document.close();
+        a.print();
+	}
+	
+	
+	function emailStatement(){
+		document.getElementById("statementprint").style.display = 'none';
+		document.getElementById("statementemail").style.display = 'none';
+		document.getElementById("statementdownload").style.display = 'none';
+		document.getElementById("myInput").style.display = 'none';
+		var y = document.getElementById("statement").innerHTML;
+		document.getElementById("statementprint").style.display = 'inline';
+    	document.getElementById("statementemail").style.display = 'inline';
+    	document.getElementById("statementdownload").style.display = 'inline';
+    	document.getElementById("statementdownload").style.display = 'inline';
+		const month = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+		const d = new Date();
+		console.log(email);
+		let currentMonth = month[d.getMonth()];
+		let currentYear = d.getFullYear();
+		console.log(currentMonth);
+		console.log(currentYear);
+		Email.send({
+				  SecureToken : "8ee728d5-0750-4e96-9095-8fa4a4de44a5",
+		          To : email,
+		          From : 'manumaanowais809@gmail.com',
+		          ReplyTo : 'manumaanowais809@gmail.com',
+		          Subject : "MNR Bank Account Statement for the period "+currentMonth+" 01 "+currentYear+" to "+currentMonth+" 30 "+currentYear,
+		          Body : "<br>Dear <b>"+fname+" "+lname+" </b>"
+		          		+"<br>Thank you for choosing eStatements"
+		          		+"<br><br>Please find your MNR Bank Account eStatement for "+currentMonth+" "+currentYear+".<br>"+y
+                  }).then(
+		           message => Swal.fire({
+		        	  	  text: 'Statement sent to : '+email,
+		        	  	  target: '#body',
+		        	  	  customClass: {
+		        	  	    body: 'position-absolute'
+		        	  	  },
+		        	  	  toast: true,
+		        	  	  position: 'top-right'
+		        	  	})
+		           
+		        );
+	}
+	
+	function downloadStatement(){
+		document.getElementById("statementprint").style.display = 'none';
+		document.getElementById("statementemail").style.display = 'none';
+		document.getElementById("statementdownload").style.display = 'none';
+		document.getElementById("myInput").style.display = 'none';
+		var y = document.getElementById("statement").innerHTML;
+		document.getElementById("statementprint").style.display = 'inline';
+    	document.getElementById("statementemail").style.display = 'inline';
+    	document.getElementById("statementdownload").style.display = 'inline';
+    	document.getElementById("statementdownload").style.display = 'inline';
+		var a = document.createElement("a");
+		a.href = window.URL.createObjectURL(new Blob([y], {type: "text/plain"}));
+		a.download = "statement.html";
+		a.click();
+	}
+</script>
+	
+<script>
+/* JQuery */
+$("#menu-toggle").click(function(e) {
+	  e.preventDefault();
+	  $("#wrapper").toggleClass("toggled");
+	});
+$("#home").click(function(){ 
+	  $("#maincontent").show();
+	  $("#popup1").hide();
+	  $("#popup2").hide();
+	  $("#showaccounts").hide();
+	  $("#addaccounts").hide();
+	  $("#updateaccounts").hide();
+	  $("#statement").hide();
+	});
+	
+$("#prof,#firstname").click(function(){ 
+	  $("#popup1").show();
+	  $("#maincontent").hide();
+	  $("#popup2").hide();
+	  $("#showaccounts").hide();
+	  $("#addaccounts").hide();
+	  $("#updateaccounts").hide();
+	  $("#statement").hide();
+	});
+	
+$("#withdraw").click(function(){ 
+	  $("#popup2").show();
+	  $("#maincontent").hide();
+	  $("#popup1").hide();
+	  $("#showaccounts").hide();
+	  $("#addaccounts").hide();
+	  $("#updateaccounts").hide();
+	  $("#statement").hide();
+	});
+$("#fast_cash").click(function(){ 
+	  $("#popup2").hide();
+	  $("#maincontent").hide();
+	  $("#popup1").hide();
+	  $("#fastcash").show();
+	  $("#showaccounts").hide();
+	  $("#addaccounts").hide();
+	  $("#updateaccounts").hide();
+	  $("#statement").hide();
+	});
+$("#acc").click(function(){ 
+	  $("#popup2").hide();
+	  $("#maincontent").hide();
+	  $("#popup1").hide();
+	  $("#showaccounts").show();
+	  $("#addaccounts").hide();
+	  $("#updateaccounts").hide();
+	  $("#statement").hide();
+	});
+$("#adduser,#addaccount").click(function(){ 
+	  $("#addaccounts").show();
+	  $("#popup2").hide();
+	  $("#maincontent").hide();
+	  $("#popup1").hide();
+	  $("#showaccounts").hide();
+	  $("#updateaccounts").hide();
+	  $("#statement").hide();
+	});
+$(".updateuserbtns").click(function(){
+	  $("#updateaccounts").show();
+	  $("#addaccounts").hide();
+	  $("#popup2").hide();
+	  $("#maincontent").hide();
+	  $("#popup1").hide();
+	  $("#showaccounts").hide();
+	  $("#statement").hide();
+});
+$("#state").click(function(){
+	  $("#statement").show();
+	  $("#updateaccounts").hide();
+	  $("#addaccounts").hide();
+	  $("#popup2").hide();
+	  $("#maincontent").hide();
+	  $("#popup1").hide();
+	  $("#showaccounts").hide();
+});
+</script>
+</html>
